@@ -1,0 +1,204 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <title>Clitoral Politics Spring 2020</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+  <meta name="viewport" content="width = 1050, user-scalable = no" />
+
+  <link rel="stylesheet" href="public/css/styles.css?v=1.0">
+  <link rel="stylesheet" href="public/css/all.min.css">
+  <script type="text/javascript" src="public/js/jquery.min.1.7.js"></script>
+  <script type="text/javascript" src="public/js//modernizr.2.5.3.min.js"></script>
+  <script type="text/javascript" src="public/js/hash.js"></script>
+</head>
+
+<body>
+
+<div id="canvas">
+  <div class="zoom-icon zoom-icon-in"></div>
+
+  <div class="button previous-button"><i class="fas fa-chevron-left"></i></div>
+  <div class="button next-button"><i class="fas fa-chevron-right"></i></div>
+
+  <div class="flipbook-viewport">
+    <div class="container">
+      <div class="flipbook">
+        <div class="page" style="background-image:url(public/images/PAGE_1.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_2.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_3.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_4.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_5.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_6.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_7.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_8.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_9.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_10.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_11.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_12.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_13.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_14.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_15.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_16.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_17.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_18.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_19.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_20.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_21.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_22.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_23.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_24.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_25.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_26.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_27.jpg)"></div>
+        <div class="page" style="background-image:url(public/images/PAGE_1.jpg)"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<a class="bottom" href="./public/Spring_2020_Zine.pdf" download>Download PDF</a>
+
+<script type="text/javascript">
+
+  function loadApp() {
+
+    $('.flipbook').turn({
+      width: 1383,
+      height: 900,
+      elevation: 50,
+      gradients: true,
+      autoCenter: true,
+      when: {
+        turning: function (event, page, view) {
+          Hash.go('page/' + page).update();
+        },
+
+        swipeLeft: function () {
+          $(this).zoom('flipbook').turn('next');
+        },
+
+        swipeRight: function () {
+          $(this).zoom('flipbook').turn('previous');
+        },
+      }
+    });
+    
+    // Zoom event
+    if ($.isTouch)
+      $('.flipbook-viewport').bind('zoom.doubleTap', zoomTo);
+    else
+      $('.flipbook-viewport').bind('zoom.tap', zoomTo);
+
+    //Initialize the zoom viewport
+    $('.flipbook-viewport').zoom({
+      flipbook: $('.flipbook'),
+      max: function () {
+        return($(window).width() > 600)? 2214 / $('.flipbook').width() : 1300 / $('.flipbook').width();
+      }, 
+      when: {
+        zoomIn: function () {
+
+          $('.zoom-icon').removeClass('zoom-icon-in').addClass('zoom-icon-out');
+
+          if (!window.escTip && !$.isTouch) {
+            escTip = true;
+
+            $('<div />', { 'class': 'exit-message' }).
+              html('<div>Press ESC to exit</div>').
+              appendTo($('body')).
+              delay(2000).
+              animate({ opacity: 0 }, 500, function () {
+                $(this).remove();
+              });
+          }
+        },
+
+        zoomOut: function () {
+          $('.exit-message').hide();
+          $('.zoom-icon').removeClass('zoom-icon-out').addClass('zoom-icon-in');
+          setTimeout(function () {
+            $('.flipbook').addClass('animated').removeClass('zoom-in');
+            resizeViewport();
+          }, 0);
+        }
+      }
+    });
+
+    $(document).keydown(function (e) {
+      var previous = 37, next = 39, esc = 27;
+
+      switch (e.keyCode) {
+        case previous:
+          $('.flipbook').turn('previous');
+          e.preventDefault();
+          break;
+
+        case next:
+          $('.flipbook').turn('next');
+          e.preventDefault();
+          break;
+
+        case esc:
+          $('.flipbook-viewport').zoom('zoomOut');
+          e.preventDefault();
+          break;
+      }
+    });
+
+    Hash.on('^page\/([0-9]*)$', {
+      yep: function (path, parts) {
+        var page = parts[1];
+
+        if (page !== undefined) {
+          if ($('.flipbook').turn('is'))
+            $('.flipbook').turn('page', page);
+        }
+      },
+      nop: function (path) {
+        if ($('.flipbook').turn('is'))
+          $('.flipbook').turn('page', 1);
+      }
+    });
+
+    $(window).resize(function () {
+      resizeViewport();
+    }).bind('orientationchange', function () {
+      resizeViewport();
+    });
+
+    resizeViewport();
+
+    $('.flipbook').addClass('animated');
+  }
+
+  $('.next-button').click(function () {
+    $('.flipbook').turn('next');
+  });
+
+  $('.previous-button').click(function () {
+    $('.flipbook').turn('previous');
+  });
+
+   $('.zoom-icon').bind('click', function () {
+      if ($(this).hasClass('zoom-icon-in'))
+        $('.flipbook-viewport').zoom('zoomIn');
+      else if ($(this).hasClass('zoom-icon-out'))
+        $('.flipbook-viewport').zoom('zoomOut');
+    });
+
+  yepnope({
+    test: Modernizr.csstransforms,
+    yep: ['public/js/turn.js'],
+    nope: ['public/js/turn.html4.min.js'],
+    both: ['public/js/zoom.min.js','public/js/book.js', 'public/css/styles.css'],
+    complete: loadApp
+  });
+</script>
+</body>
+
+</html>
