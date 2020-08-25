@@ -1,7 +1,3 @@
-
-// Set the width and height for the viewport
-
-
 function resizeViewport() {
   var width = $(window).width(),
     height = $(window).height(),
@@ -60,8 +56,9 @@ function calculateBound(d) {
       bound.height = Math.round(d.boundWidth / rel);
     }
   }
-  bound.width = bound.height * 1.333333
-  // bound.width = bound.width - 48;
+
+  // Fix aspect ratio
+  bound.width = bound.height * 1.333333;
   return bound;
 }
 
