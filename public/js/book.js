@@ -60,7 +60,8 @@ function calculateBound(d) {
       bound.height = Math.round(d.boundWidth / rel);
     }
   }
-  bound.width = bound.width - 48;
+  bound.width = bound.height * 1.333333
+  // bound.width = bound.width - 48;
   return bound;
 }
 
